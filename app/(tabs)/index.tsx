@@ -1,14 +1,23 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Button } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-
+import { Text, View } from 'react-native'
+import { useAppStore } from '@/store/app';
+import { useTheme } from '@/hooks/useTheme';
 export default function TabOneScreen() {
+  const firstLaunch = useAppStore((state) => state.firstLaunch) 
+  const setFirstLaunch = useAppStore((state) => state.setFirstLaunch) 
+  const theme = useTheme()
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <Text style={[styles.title, {color: theme.text}]}>{String(firstLaunch)}</Text>
+      <View/>
+      <Text style={{color: theme.text}}>
+        Hello! This isn't the first launch
+      </Text>
+      <Button 
+        title='Reset' 
+        onPress={() => setFirstLaunch(true)}
+      />
     </View>
   );
 }
