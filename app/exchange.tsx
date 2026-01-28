@@ -1,32 +1,30 @@
 import { useTheme } from '@/hooks/useTheme';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
-import QRCode from "react-native-qrcode-svg"
-import { Text, View } from 'react-native'
-import { KeyManager } from '@/nostr/keys';
+import { Platform, StyleSheet, View , Text, Share} from 'react-native';
+import { QRCodeLink } from '@/components/QRCodePublicKey';
+import { linkManager } from '@/nostr/link';
 import { useEffect, useState } from 'react';
 export default function ModalScreen() {
   const theme = useTheme() 
-  let [publicKey, setPublicKey] = useState<string | null>(null)
+  const [link, setLink] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadKey = async () => {
-      const pk = KeyManager.encodeToNip19(await KeyManager.getPublicKey())
-      setPublicKey(pk)
+    async function generateLink(){
+      setLink(await linkManager.makeLink())
     }
 
-    loadKey()
+    generateLink()
   }, [])
   return (
     <View style={styles.container}>
-      {publicKey && (
-      <QRCode
-        value={publicKey}
-        size={220}
-        color="#000"
-        backgroundColor="#fff"
-      />
+      {link && (
+        <View>
+          <QRCodeLink link={link}/>
+          <Text style={{color: theme.text}}> { link }</Text>
+        </View>
     )}
+
+      
 
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
@@ -40,5 +38,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  }
 });

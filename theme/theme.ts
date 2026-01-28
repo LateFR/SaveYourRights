@@ -22,8 +22,8 @@ export const lightTheme: Theme = {
   text: '#000000',
   interface: {
     primary: '#2563EB',   // Blue 600 (Action principale)
-    secondary: '#64748B', // Slate 500 (Texte secondaire / icônes)
-    tertiary: '#F1F5F9',  // Slate 100 (Bords de cartes / fonds légers)
+    secondary: '#475569',    // gris ardoise
+    tertiary: '#E2E8F0',     // fond de cartes 
     danger: '#DC2626',
   },
   tabBar: {

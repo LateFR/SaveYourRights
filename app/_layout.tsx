@@ -1,5 +1,5 @@
+import 'react-native-get-random-values';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, Redirect } from 'expo-router'; // Ajout de Redirect
 import * as SplashScreen from 'expo-splash-screen';

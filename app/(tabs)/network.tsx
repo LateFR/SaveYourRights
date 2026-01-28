@@ -9,8 +9,9 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 export default function NetworkTab() {
     const theme = useTheme();
     const messages = useNostrStore((state) => state.messages);
-    const { error } = useSendMessage();
-
+    //const clearMessages = useNostrStore((state) => state.clearMessages)
+    const { sendMessage, error } = useSendMessage();
+    
     return (
         <View style={[style.container, { backgroundColor: theme.background }]}>
             {/* Zone de contenu (Messages/Inbox) */}

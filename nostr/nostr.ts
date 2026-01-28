@@ -2,7 +2,7 @@ import { useNostrStore } from "@/store/nostr";
 import { KeyManager } from "./keys";
 import { SimplePool, SubCloser } from 'nostr-tools/pool'
 
-const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://relay.nostr.band", "wss://nos.lol"]
+export const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://relay.nostr.band", "wss://nos.lol"]
 const APP_KIND = 30473
 export const nostrManager = {
     pool: new SimplePool(),
@@ -28,7 +28,7 @@ export const nostrManager = {
         this.activeSub = this.pool.subscribe([...relays, ...DEFAULT_RELAYS],
             {
                 kinds: [APP_KIND],
-                "#p": [await KeyManager.getPublicKey()],
+                "#p": [KeyManager.getPublicKey()],
                 since: Math.floor(lastSubCheck/1000),
             }, {
                 async onevent(event) {
@@ -37,7 +37,8 @@ export const nostrManager = {
                     useNostrStore.getState().addMessage({
                         pk: event.pubkey,
                         content: decrypted,
-                        created_at: event.created_at
+                        created_at: event.created_at,
+                        id: event.id
                     })
                 },
             }

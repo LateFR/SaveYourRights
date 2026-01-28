@@ -5,8 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 type NostrState = {
     lastSubCheck: number,
     setLastSubCheck: (lastSubCheck: number) => void,
-    messages: {pk: string, content: string, created_at: number}[],
-    addMessage: (message: {pk: string, content: string, created_at: number}) => void,
+    messages: {pk: string, content: string, created_at: number, id: string}[],
+    addMessage: (message: {pk: string, content: string, created_at: number, id: string}) => void,
     clearMessages: () => void
     _hasHydrated: boolean,
     setHasHydrated: (state: boolean) => void
@@ -20,7 +20,15 @@ export const useNostrStore = create(
             setLastSubCheck: (lastSubCheck) => set({ lastSubCheck }), 
             messages: [],
             addMessage: (message) => {
-                set((state) => ({messages: [...state.messages, message]}))
+                set((state) => {
+                    if (state.messages.some(m => m.id === message.id)) {
+                        return state //deduplicate
+                    }
+                    return {
+                        lastSubCheck: Date.now(),
+                        messages: [...state.messages, message]
+                    }
+                })
             },
             clearMessages: () => { set({ messages:  []})},
             _hasHydrated: false,
