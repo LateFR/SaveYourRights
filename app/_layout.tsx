@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { useAppStore } from '@/store/app'; // Ajout de l'import
 import 'react-native-reanimated';
 import { useTheme } from '@/hooks/useTheme';
+import { NostrProvider } from '@/context/NostrProvider';
+import { ActivityIndicator, View } from 'react-native';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -33,24 +35,41 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-// On retire le "export default" ici car il y en a déjà un au-dessus
 function RootLayoutNav() {
   const theme = useTheme()
   const firstLaunch = useAppStore((state) => state.firstLaunch);
   const hasHydrated = useAppStore((state) => state._hasHydrated)
 
+  if (!hasHydrated) {
+    return (
+      <View style={
+        {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center"
+        }
+      }>
+        <ActivityIndicator size={ 90 }/>
+      </View>
+    )
+  }
+  
   return (
-    <Stack 
-      initialRouteName={firstLaunch? "(setup)/loading" : "(tabs)"}
-      screenOptions={{ 
-        headerShown: false,
-        contentStyle: { backgroundColor: theme.background }
-      }}
-    >
-      <Stack.Screen name="(setup)/loading" options={{ gestureEnabled: false }} />
-      <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
-      <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-    </Stack>
+    <NostrProvider>
+      <Stack 
+        initialRouteName={firstLaunch? "(setup)" : "(tabs)"}
+        screenOptions={{ 
+          headerShown: false,
+          contentStyle: { backgroundColor: theme.background }
+        }}
+      >
+        <Stack.Screen name="(setup)" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="exchange" options={{ presentation: 'modal' }} />
+      </Stack>
+      {firstLaunch ? <Redirect href="/(setup)/loading" /> : null}
+    </NostrProvider>
+    
   );
 }
 

@@ -1,4 +1,5 @@
-import { eventManager } from "@/nostr/event";
+import { KeyManager } from "@/nostr/keys";
+import { nostrManager } from "@/nostr/nostr";
 import { useCallback, useState } from "react";
 
 export function useSendMessage(){
@@ -10,7 +11,8 @@ export function useSendMessage(){
             try {
                 setLoading(true)
                 setError(null)
-                return await eventManager.send(message, 4, [["p", to]])
+                const toPkHex = to.startsWith('npub') ? KeyManager.decodeFromNip19(to) : to
+                return await nostrManager.send(message, toPkHex)
             } catch(error){
                 setError(error as Error)
                 throw error
