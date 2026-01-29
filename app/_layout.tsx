@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { useTheme } from '@/hooks/useTheme';
 import { NostrProvider } from '@/context/NostrProvider';
 import { ActivityIndicator, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -55,6 +56,7 @@ function RootLayoutNav() {
   }
   
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor:theme.background}}>
     <NostrProvider>
       <Stack 
         initialRouteName={firstLaunch? "(setup)" : "(tabs)"}
@@ -69,6 +71,7 @@ function RootLayoutNav() {
       </Stack>
       {firstLaunch ? <Redirect href="/(setup)/loading" /> : null}
     </NostrProvider>
+    </SafeAreaView>
     
   );
 }

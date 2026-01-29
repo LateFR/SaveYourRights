@@ -6,7 +6,8 @@ export type Theme = {
   interface: {
     primary: string,
     secondary: string,
-    tertiary: string,
+    auxiliary: string,
+    paleBackround: string,
     danger: string,
   }
   tabBar: {
@@ -23,7 +24,8 @@ export const lightTheme: Theme = {
   interface: {
     primary: '#2563EB',   // Blue 600 (Action principale)
     secondary: '#475569',    // gris ardoise
-    tertiary: '#E2E8F0',     // fond de cartes 
+    auxiliary: "#ffa200ff",
+    paleBackround: '#E2E8F0',     // fond de cartes 
     danger: '#DC2626',
   },
   tabBar: {
@@ -40,7 +42,8 @@ export const darkTheme: Theme = {
   interface: {
     primary: '#3B82F6',   // Blue 500
     secondary: '#94A3B8', // Slate 400
-    tertiary: '#1E293B',  // Slate 800 (Fonds de cartes sombres)
+    auxiliary: "#C57A08",
+    paleBackround: '#1f1e1eff',  // Slate 800 (Fonds de cartes sombres)
     danger: '#EF4444',
   },
   tabBar: {

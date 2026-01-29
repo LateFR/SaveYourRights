@@ -5,7 +5,6 @@ import { Tabs } from 'expo-router'
 import { useTheme } from '@/hooks/useTheme'
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { useDeepLink } from '@/hooks/useDeepLink';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name']
@@ -24,6 +23,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.tabBar.background,
           borderTopColor: theme.tabBar.border,
+          height: 50,
         },
         sceneStyle: {
           backgroundColor: theme.background
