@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store'
 import { bytesToHex, hexToBytes } from 'nostr-tools/utils';
 import * as Crypto from 'expo-crypto';
 import * as ecc from '@bitcoinerlab/secp256k1';
+import { sha256 } from '@noble/hashes/sha2.js'
 export const SK_KEY = 'sk_key'
 
 export const KeyManager = {
@@ -70,34 +71,24 @@ export const KeyManager = {
         return nip44.decrypt(content, convKey)
     },
     
-    async signPayload(payload: string){
+    async signPayload(payload: Uint8Array<ArrayBuffer>): Promise<Uint8Array>{
         // Hash avec expo-crypto
-        const hashHex = await Crypto.digestStringAsync(
-            Crypto.CryptoDigestAlgorithm.SHA256,
-            payload
-        );
+        const hash = sha256(payload);
         
         // Convertir en Uint8Array (pas Buffer, @bitcoinerlab préfère Uint8Array)
-        const hashBytes = hexToBytes(hashHex);
         const privKeyBytes = this._getSecretBytes();
         
         // Signer avec Schnorr
-        const sig = ecc.signSchnorr(hashBytes, privKeyBytes);
+        const sig = ecc.signSchnorr(hash, privKeyBytes);
         
-        // Retourner en hex
-        return bytesToHex(sig);
+        return sig;
     },
     
-    async verifySig(sigHex: string, pk: string, payload: string){
-        const hashHex = await Crypto.digestStringAsync(
-            Crypto.CryptoDigestAlgorithm.SHA256,
-            payload
-        );
+    async verifySig(sig: Uint8Array, pk: string, payload: Uint8Array){
+        const hash = sha256(payload)
         
-        const hashBytes = hexToBytes(hashHex);
-        const sigBytes = hexToBytes(sigHex);
         const pubKeyBytes = hexToBytes(pk);
         
-        return ecc.verifySchnorr(hashBytes, pubKeyBytes, sigBytes);
+        return ecc.verifySchnorr(hash, pubKeyBytes, sig);
     }
 }

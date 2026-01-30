@@ -24,8 +24,9 @@ export function NostrProvider({ children }: { children: ReactNode}){
         return () => nostrManager.stopListening()
     }, [isNostrStoreReady])
     useDeepLink({
-        onNewExchange: (pk: string) => {
-            console.log(pk)
+        onNewExchange: (pk: string, relays: string[]) => {
+            
+            console.log(pk, relays)
         }, 
         onError: (error: string, details?: Error) => {
             if (Platform.OS == "ios"){

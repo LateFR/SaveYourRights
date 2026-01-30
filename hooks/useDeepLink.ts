@@ -3,9 +3,13 @@ import { useEffect, useRef } from "react";
 
 export function useDeepLink({onNewExchange, onError}: Handlers){
     useEffect(() => {
-        deepLinkService.initialize({
-            onNewExchange,
-            onError
-        })
+
+        const init = async () => { 
+            deepLinkService.initialize({
+                onNewExchange,
+                onError
+            })
+        }
+        init()
     }, [onNewExchange, onError])
 }

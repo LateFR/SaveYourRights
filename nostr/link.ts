@@ -1,58 +1,77 @@
 import { KeyManager } from "./keys"
 import { DEFAULT_RELAYS } from "./nostr"
 import { Buffer } from "buffer"
-import pako from "pako"
+import { encode, decode } from "@msgpack/msgpack"
+import { bytesToHex } from "@noble/hashes/utils.js"
 
-type ContactPayload = {
-    p: string,
-    r: string[]
-    e: number
-}
+type WirePayload = [
+    1, //Version
+    string, // privateKey
+    string[], //relays
+    number, //expiration
+]
+const SUPPORTED_LINK_VERSION = 1
 
 export const linkManager = {
     async makeLink() {
-        const payload: ContactPayload = {
-            p: KeyManager.getPublicKey(),
-            r: DEFAULT_RELAYS,
-            e: Math.floor(Date.now() / 1000) + 60 * 10
-        }
+        const payload: WirePayload = [
+            1,
+            KeyManager.getPublicKey(),
+            DEFAULT_RELAYS,
+            Math.floor(Date.now() / 1000) + 60 * 10
+        ]
         
-        const sig = await KeyManager.signPayload(JSON.stringify(payload))
+        const sig = await KeyManager.signPayload(encode(payload))
         
         
-        // Compresser (pako)
-        const compressed = pako.deflate(JSON.stringify({payload: payload, sig}));
+        const msgpackPayload = encode({payload: payload, sig});
         // Base64
-        const finalEncodedPayload = Buffer.from(compressed).toString("base64"); 
+        const finalEncodedPayload = this.toBase64Url(Buffer.from(msgpackPayload)); 
         
         return `saveyourrights://c?p=${finalEncodedPayload}`
     },
     decodePayload(base64Payload: string) {
         try{
-            const compressedPayload = Buffer.from(base64Payload, "base64")
-            const { payload, sig } = JSON.parse(pako.inflate(compressedPayload, { to: "string"}))
-            console.log(payload, sig)
-            if (
-                !payload.p || !payload.r || !payload.e ||
-                typeof payload.p !== "string" ||
-                !Array.isArray(payload.r) ||
-                typeof payload.e !== "number" ||
-                typeof sig !== "string"
-            ) {
-                throw new Error("The payload has a bad structure");
-            }
+            const compressedPayload = this.fromBase64Url(base64Payload)
+            const { payload, sig } = decode(compressedPayload) as {payload: WirePayload, sig: Uint8Array}
 
+            if (!this.isWirePayload(payload)) throw new Error("The payload has a bad structure");
+            if (payload[0]>SUPPORTED_LINK_VERSION) throw new Error("The link version is too hight. May update the app?")
 
-            return {payload: payload as ContactPayload, sig: sig as string, originalPayload: JSON.stringify(payload)}
+            return {payload: payload as WirePayload, sig: sig, originalPayload: encode(payload)}
         } catch (err) {
             throw new Error("Invalid payload structure: " + String(err))
         }
     },
-    async checkSigValidity(sig: string, pk: string, expiration: number, payload: string){
+    async checkSigValidity(sig: Uint8Array, pk: string, expiration: number, payload: Uint8Array){
         if (this.isSigExpired(expiration)) return false
         return await KeyManager.verifySig(sig, pk, payload)
     },
     isSigExpired(expiration: number){
         return expiration < Math.floor(Date.now() / 1000)
+    },
+    toBase64Url(buffer: Uint8Array | Buffer): string {
+        return Buffer.from(buffer)
+            .toString("base64")      // base64 standard
+            .replace(/\+/g, "-")     // + → -
+            .replace(/\//g, "_")     // / → _
+            .replace(/=+$/, "")      // supprime padding =
+    },
+    fromBase64Url(base64url: string): Buffer {
+        const base64 = base64url
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+            // ajoute le padding si nécessaire
+            + "=".repeat((4 - (base64url.length % 4)) % 4)
+
+        return Buffer.from(base64, "base64")
+    },
+    isWirePayload(payload: any): payload is WirePayload {
+        return Array.isArray(payload) &&
+            payload.length === 4 &&
+            typeof payload[0] === "number" &&
+            typeof payload[1] === "string" &&
+            Array.isArray(payload[2]) &&
+            typeof payload[3] === "number"
     }
 }

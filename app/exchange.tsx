@@ -27,7 +27,7 @@ export default function ModalScreen() {
     generateLink()
   }, [])
 
-  const onScanned = (data: string) => {
+  const onScanned = async (data: string) => {
     setScanning(false)
     setError(null)
     if (!data.startsWith("saveyourrights://c?p=")){
@@ -35,7 +35,7 @@ export default function ModalScreen() {
       return
     }
     
-    deepLinkService.getInstance()?.handleURL(data)
+    await deepLinkService.getInstance()?.handleURL(data)
   }
   if (scanning){
     return (
