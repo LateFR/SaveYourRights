@@ -17,7 +17,7 @@ export function NostrProvider({ children }: { children: ReactNode}){
     const [showNewContactPopup, setShowNewContactPopup] = useState<boolean>(false)
     const [onPopupContinue, setOnPopupContinue] = useState<((name: string) => void) | null>(null)
     const [onCanceledPopup, setOnCanceledPopup] = useState<(() => void) | null>(null)
-
+    const relaysToListen = useNostrStore((state) => state.relaysToListen)
     const waitForPopupContinue = async (): Promise<string> => {
         return new Promise((resolve, reject) => {
             setOnCanceledPopup(() => () => {

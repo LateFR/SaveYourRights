@@ -1,7 +1,7 @@
 import * as Linking from 'expo-linking'
 import { EmitterSubscription } from 'react-native';
 import { linkManager } from '@/nostr/link';
-import { DEFAULT_RELAYS } from '@/nostr/nostr';
+import { DEFAULT_RELAYS } from '@/store/nostr';
 export type Handlers = {
     onNewExchange: (pk: string, relays: string[]) => void,
     onError: (message: string, details?: Error) => void

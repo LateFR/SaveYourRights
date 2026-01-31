@@ -1,8 +1,7 @@
 import { KeyManager } from "./keys"
-import { DEFAULT_RELAYS } from "./nostr"
+import { DEFAULT_RELAYS } from "@/store/nostr"
 import { Buffer } from "buffer"
 import { encode, decode } from "@msgpack/msgpack"
-import { bytesToHex } from "@noble/hashes/utils.js"
 
 type WirePayload = [
     1, //Version
