@@ -3,11 +3,10 @@ import { StyleSheet, View, Text, Pressable, TextInput, ActivityIndicator } from 
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useEffect, useRef, useState } from "react";
-import Animated, { SlideInUp, SlideInDown, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
-import { opacity } from "react-native-reanimated/lib/typescript/Colors";
+import { useEffect, useState } from "react";
+import Animated, { SlideInDown, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
-export function NewContactPopup({visible, onClose, onContinue}: {visible: boolean, onClose: () => void, onContinue: (name: string) => void}){
+export function NewContactPopup({visible, onClose, onCanceled, onContinue}: {visible: boolean, onClose?: () => void, onCanceled?: () => void, onContinue?: (name: string) => void}){
     const theme = useTheme()
     const [name, setName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
@@ -46,8 +45,14 @@ export function NewContactPopup({visible, onClose, onContinue}: {visible: boolea
             }]}>
                 {!loading && (
                 <>    
+                <Text style={[ style.title, { color: theme.text }]}>
+                    New contact
+                </Text>
                 <Pressable style={[style.closeButton, {backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}]}
-                    onPress={onClose} 
+                    onPress={() => {
+                        onCanceled?.()
+                        onClose?.()
+                    }} 
                 > 
                     <AntDesign name="close" size={20} color={theme.text} />
                 </Pressable>
@@ -68,7 +73,7 @@ export function NewContactPopup({visible, onClose, onContinue}: {visible: boolea
                     onPress={() => {
                         if (!isValidInput) return
                         setLoading(true)
-                        onContinue(name)
+                        onContinue?.(name)
                     }}
                 >
                     <Animated.View 
@@ -127,12 +132,17 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+    title: {
+        fontSize: 22,
+        marginBottom: 10,
+        marginTop: 3
+    },
     avatarCircle: {
         width: 100,
         height: 100,
         borderRadius: 50,
         marginTop: 20,
-        marginBottom: 15,
+        marginBottom: 10,
         justifyContent: "center",
         alignItems: "center",
     },

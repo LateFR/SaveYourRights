@@ -49,5 +49,27 @@ export const nostrManager = {
             this.activeSub.close()
             this.activeSub = null
         }
-    }
+    },
+    isRelayReachable(url: string, timeout = 5000): Promise<boolean> {
+        return new Promise((resolve) => {
+            const ws = new WebSocket(url)
+
+            const timer = setTimeout(() => {
+                ws.close();
+                resolve(false)
+            })
+
+            ws.onopen = () => {
+                clearTimeout(timer)
+                ws.close()
+                resolve(true)
+            }
+
+            ws.onerror = () => {
+                clearTimeout(timer)
+                ws.close()
+                resolve(false)
+            }
+        })
+    } 
 }

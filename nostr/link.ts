@@ -73,5 +73,14 @@ export const linkManager = {
             typeof payload[1] === "string" &&
             Array.isArray(payload[2]) &&
             typeof payload[3] === "number"
+    },
+    isValidWssUrl(url: string): boolean {
+        try {
+            const parsed = new URL(url)
+            return parsed.protocol == "wss:"
+        } catch (e) {
+            console.error(e)
+            return false
+        }
     }
 }

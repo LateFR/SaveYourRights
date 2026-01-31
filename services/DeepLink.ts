@@ -1,6 +1,7 @@
 import * as Linking from 'expo-linking'
 import { EmitterSubscription } from 'react-native';
 import { linkManager } from '@/nostr/link';
+import { DEFAULT_RELAYS } from '@/nostr/nostr';
 export type Handlers = {
     onNewExchange: (pk: string, relays: string[]) => void,
     onError: (message: string, details?: Error) => void
@@ -77,7 +78,7 @@ class DeepLink{
                 this.handlers.onError("The signature is incorect. Someone might be trying to deceive you.")
                 return
             }
-
+            const filtredRelays = relays.filter((relay) => linkManager.isValidWssUrl(relay)) || DEFAULT_RELAYS
             this.handlers.onNewExchange(pk, relays)
         } finally {
             this.isHandling = false     

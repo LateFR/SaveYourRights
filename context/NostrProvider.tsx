@@ -1,6 +1,7 @@
 import { ErrorPopup } from "@/components/ErrorPopup";
 import { NewContactPopup } from "@/components/NewContactPopup";
 import { useDeepLink } from "@/hooks/useDeepLink";
+import { contactManager } from "@/nostr/contact";
 import { KeyManager } from "@/nostr/keys";
 import { nostrManager } from "@/nostr/nostr";
 import { useNostrStore } from "@/store/nostr";
@@ -14,6 +15,26 @@ export function NostrProvider({ children }: { children: ReactNode}){
 
     const [nostrError, setNostrError] = useState<{error: string, details: null | string} | null>(null)
     const [showNewContactPopup, setShowNewContactPopup] = useState<boolean>(false)
+    const [onPopupContinue, setOnPopupContinue] = useState<((name: string) => void) | null>(null)
+    const [onCanceledPopup, setOnCanceledPopup] = useState<(() => void) | null>(null)
+
+    const waitForPopupContinue = async (): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            setOnCanceledPopup(() => () => {
+                setShowNewContactPopup(false);
+                setOnCanceledPopup(null);
+                setOnPopupContinue(null);
+                reject(new Error("Popup canceled"))
+            })
+            setOnPopupContinue(() => (name: string) => {
+                // DON'T close the popup here
+                setOnCanceledPopup(null);
+                setOnPopupContinue(null);
+                resolve(name)
+            })
+            setShowNewContactPopup(true)
+        })
+    }
     useEffect(() => {
         if (!KeyManager.hasKey()) return
         if (!isNostrStoreReady) return
@@ -28,8 +49,15 @@ export function NostrProvider({ children }: { children: ReactNode}){
     useDeepLink({
         onNewExchange: (pk: string, relays: string[]) => {
             if (router.canDismiss()) router.dismiss()
-            setShowNewContactPopup(true)
-            console.log(pk, relays)
+                
+            waitForPopupContinue().then((name) => {
+                try{
+                    contactManager.addNewContact(pk, name, relays)
+                    setShowNewContactPopup(false)
+                } catch (err) {
+                    setNostrError({ error: "The contact can't be reached. Please check you're internet connection", details: (err as Error)?.message })
+                }
+            }).catch()
         }, 
         onError: (error: string, details?: Error) => {
             if (Platform.OS == "ios"){
@@ -47,7 +75,12 @@ export function NostrProvider({ children }: { children: ReactNode}){
                 <ErrorPopup message={nostrError.error} details={nostrError.details ?? undefined}  onClose={() => setNostrError(null)} />
             )}
             
-            <NewContactPopup visible={showNewContactPopup} onClose={() => setShowNewContactPopup(false)} onContinue={(name) => {console.log(name)}}/>
+            <NewContactPopup 
+                visible={showNewContactPopup} 
+                onClose={() => setShowNewContactPopup(false)} 
+                onCanceled={() => onCanceledPopup?.()} 
+                onContinue={(name) => onPopupContinue?.(name)}
+            />
             
         </>
     )
