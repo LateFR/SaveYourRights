@@ -79,7 +79,7 @@ export const linkManager = {
             const parsed = new URL(url)
             return parsed.protocol == "wss:"
         } catch (e) {
-            console.error(e)
+            console.log(e)
             return false
         }
     }

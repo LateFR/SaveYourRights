@@ -78,8 +78,10 @@ class DeepLink{
                 this.handlers.onError("The signature is incorect. Someone might be trying to deceive you.")
                 return
             }
-            const filtredRelays = relays.filter((relay) => linkManager.isValidWssUrl(relay)) || DEFAULT_RELAYS
-            this.handlers.onNewExchange(pk, relays)
+            const filteredRelays = relays.filter((relay) => linkManager.isValidWssUrl(relay))
+            const finalRelays = filteredRelays.length ? filteredRelays : DEFAULT_RELAYS
+            
+            this.handlers.onNewExchange(pk, finalRelays)
         } finally {
             this.isHandling = false     
         }   

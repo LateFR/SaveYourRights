@@ -2,7 +2,8 @@ import { useNostrStore } from "@/store/nostr";
 import { KeyManager } from "./keys";
 import { SimplePool, SubCloser } from 'nostr-tools/pool'
 
-export const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://relay.nostr.band", "wss://nos.lol"]
+//export const DEFAULT_RELAYS = ["wss://relay.damus.io", "wss://relay.nostr.band", "wss://nos.lol"]
+export const DEFAULT_RELAYS = ["http://e.e"]
 const APP_KIND = 30473
 export const nostrManager = {
     pool: new SimplePool(),

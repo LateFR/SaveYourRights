@@ -57,7 +57,7 @@ export function NostrProvider({ children }: { children: ReactNode}){
                 } catch (err) {
                     setNostrError({ error: "The contact can't be reached. Please check you're internet connection", details: (err as Error)?.message })
                 }
-            }).catch()
+            }).catch(() => {return})
         }, 
         onError: (error: string, details?: Error) => {
             if (Platform.OS == "ios"){

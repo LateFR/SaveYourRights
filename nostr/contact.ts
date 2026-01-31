@@ -11,8 +11,8 @@ export const contactManager = {
         )
         const reachableRelays = results.filter(r => r.reachable).map(r => r.relay)
 
-        console.log("Reachable relays: ", relays)
+        console.log("Reachable relays: ", reachableRelays)
 
-        if (!reachableRelays) throw new Error("The contact "+pk+" doesn't have reachable relays")
+        if (reachableRelays.length === 0) throw new Error("The contact "+pk+" doesn't have reachable relays")
     },
 }
