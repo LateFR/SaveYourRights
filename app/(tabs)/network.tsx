@@ -1,6 +1,6 @@
 import { useTheme } from "@/hooks/useTheme";
 import { StyleSheet, View, Text, Pressable, Platform } from "react-native";
-import { useNostrStore } from "@/store/nostr";
+import { DEFAULT_RELAYS, useNostrStore } from "@/store/nostr";
 import { useSendMessage } from "@/hooks/nostr/useSendMessage";
 import { useEffect } from "react";
 import { router } from "expo-router";
@@ -9,9 +9,11 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 export default function NetworkTab() {
     const theme = useTheme();
     const messages = useNostrStore((state) => state.messages);
-    //const clearMessages = useNostrStore((state) => state.clearMessages)
+    const clearMessages = useNostrStore((state) => state.clearMessages)
     const { sendMessage, error } = useSendMessage();
-    
+    useEffect(() => {
+        clearMessages()
+    }, [])
     return (
         <View style={[style.container, { backgroundColor: theme.background }]}>
             {/* Zone de contenu (Messages/Inbox) */}

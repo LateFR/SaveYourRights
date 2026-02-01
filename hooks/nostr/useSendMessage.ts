@@ -1,7 +1,7 @@
 import { KeyManager } from "@/nostr/keys";
 import { nostrManager } from "@/nostr/nostr";
 import { useCallback, useState } from "react";
-
+import { Payload } from "@/nostr/nostr";
 export function useSendMessage(){
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
@@ -12,7 +12,11 @@ export function useSendMessage(){
                 setLoading(true)
                 setError(null)
                 const toPkHex = to.startsWith('npub') ? KeyManager.decodeFromNip19(to) : to
-                return await nostrManager.send(message, toPkHex)
+                const payload: Payload = {
+                    action: "message",
+                    info: {message: message, live: true}
+                }
+                return await nostrManager.send(payload, toPkHex)
             } catch(error){
                 setError(error as Error)
                 throw error

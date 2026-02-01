@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-type Contact = { pk: string, name: string }
+type Contact = { pk: string, name: string, status: "PROPOSED" | "RECEIVED" | "ETABLISHED" }
 type messagesState = {
     contacts: Contact[] | [],
     addContact: ( contact:  Contact) => void

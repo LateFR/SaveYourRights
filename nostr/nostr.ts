@@ -4,13 +4,19 @@ import { SimplePool, SubCloser } from 'nostr-tools/pool'
 import { DEFAULT_RELAYS } from "@/store/nostr";
 
 const APP_KIND = 30473
+
+export type Payload = {
+    action: string,
+    info: Record<string, unknown>
+}
 export const nostrManager = {
     pool: new SimplePool(),
     activeSub: null as SubCloser | null,
-    async send(content: string, toPk: string , relays: string[] = DEFAULT_RELAYS){
+    async send(payload: Payload, toPk: string , relays: string[] = DEFAULT_RELAYS){
         if (!KeyManager.hasKey()) throw new Error("Keys aren't generated")
         
-        const ciphertext = await KeyManager.encryptToNip44(toPk, content)
+        const stringPayload = JSON.stringify(payload) 
+        const ciphertext = await KeyManager.encryptToNip44(toPk, stringPayload)
 
         const event = {
             content: ciphertext, 
@@ -57,7 +63,7 @@ export const nostrManager = {
             const timer = setTimeout(() => {
                 ws.close();
                 resolve(false)
-            })
+            }, timeout)
 
             ws.onopen = () => {
                 clearTimeout(timer)
@@ -65,7 +71,7 @@ export const nostrManager = {
                 resolve(true)
             }
 
-            ws.onerror = () => {
+            ws.onclose = () => {
                 clearTimeout(timer)
                 ws.close()
                 resolve(false)

@@ -3,9 +3,9 @@ import { StyleSheet, Button } from 'react-native';
 import { Text, View } from 'react-native'
 import { useAppStore } from '@/store/app';
 import { useTheme } from '@/hooks/useTheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function TabOneScreen() {
   const firstLaunch = useAppStore((state) => state.firstLaunch) 
-  const setFirstLaunch = useAppStore((state) => state.setFirstLaunch) 
   const theme = useTheme()
   return (
     <View style={styles.container}>
@@ -16,7 +16,7 @@ export default function TabOneScreen() {
       </Text>
       <Button 
         title='Reset' 
-        onPress={() => setFirstLaunch(true)}
+        onPress={() => AsyncStorage.clear()}
       />
     </View>
   );

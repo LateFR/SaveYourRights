@@ -5,6 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 type AppState = {
     firstLaunch: boolean,
     setFirstLaunch: (firstLaunch: boolean) => void,
+    username: string,
+    setUsername: (username: string) => void
     _hasHydrated: boolean,
     setHasHydrated: (state: boolean) => void
 }
@@ -15,6 +17,8 @@ export const useAppStore = create(
         (set)=>({
             firstLaunch: true,
             setFirstLaunch: (firstLaunch: boolean) => set({firstLaunch}),
+            username: "USER",
+            setUsername: (username: string) => {set({ username })},
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state})
         }), {

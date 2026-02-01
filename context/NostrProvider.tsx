@@ -39,7 +39,8 @@ export function NostrProvider({ children }: { children: ReactNode}){
         if (!KeyManager.hasKey()) return
         if (!isNostrStoreReady) return
         const listen = async () => {
-            await nostrManager.startListening()
+            console.log(Platform.OS)
+            await nostrManager.startListening(relaysToListen)
         }
 
         listen()
@@ -50,9 +51,9 @@ export function NostrProvider({ children }: { children: ReactNode}){
         onNewExchange: (pk: string, relays: string[]) => {
             if (router.canDismiss()) router.dismiss()
                 
-            waitForPopupContinue().then((name) => {
+            waitForPopupContinue().then(async (name) => {
                 try{
-                    contactManager.addNewContact(pk, name, relays)
+                    await contactManager.addNewContact(pk, name, relays)
                     setShowNewContactPopup(false)
                 } catch (err) {
                     setNostrError({ error: "The contact can't be reached. Please check you're internet connection", details: (err as Error)?.message })
