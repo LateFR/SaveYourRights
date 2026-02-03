@@ -1,3 +1,5 @@
+import { colors, Colors } from "./colors"
+
 // theme/theme.ts
 export type Theme = {
   isDark: boolean
@@ -14,7 +16,8 @@ export type Theme = {
     background: string
     border: string
     active: string
-  }
+  },
+  colors: Colors
 }
 
 export const lightTheme: Theme = {
@@ -33,6 +36,7 @@ export const lightTheme: Theme = {
     border: '#e5e5e5',
     active: '#007AFF',
   },
+  colors: colors
 }
 
 export const darkTheme: Theme = {
@@ -51,4 +55,5 @@ export const darkTheme: Theme = {
     border: '#333333',
     active: '#0A84FF',
   },
+  colors: colors
 }

@@ -1,6 +1,7 @@
 import { useAppStore } from "@/store/app"
 import { nostrManager, Payload } from "./nostr"
 import { useNostrStore } from "@/store/nostr"
+import { useMessagesStore, Contact } from "@/store/messages"
 
 export const contactManager = {
     async addNewContact(pk: string , name: string = "USER", relays: string[]){
@@ -17,6 +18,13 @@ export const contactManager = {
         if (reachableRelays.length === 0) throw new Error("The contact "+pk+" doesn't have reachable relays")
         
         await this.initHandcheck(pk, relays)
+        
+        const newContact: Contact = {
+            pk,
+            name,
+            status: "PROPOSED"
+        }
+        useMessagesStore.getState().addContact(newContact)
     },
     async initHandcheck(pk: string, relays: string[]){
         const payload: Payload = {

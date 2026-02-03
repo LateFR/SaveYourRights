@@ -1,11 +1,11 @@
 import 'react-native-get-random-values';
+import 'react-native-reanimated';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
 import { Stack, Redirect } from 'expo-router'; // Ajout de Redirect
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useAppStore } from '@/store/app'; // Ajout de l'import
-import 'react-native-reanimated';
 import { useTheme } from '@/hooks/useTheme';
 import { NostrProvider } from '@/context/NostrProvider';
 import { ActivityIndicator, View } from 'react-native';

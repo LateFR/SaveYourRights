@@ -1,36 +1,45 @@
 import { useTheme } from "@/hooks/useTheme";
-import { StyleSheet, View, Text, Pressable, Platform } from "react-native";
-import { DEFAULT_RELAYS, useNostrStore } from "@/store/nostr";
+import { StyleSheet, View, Text, Pressable, FlatList, Platform } from "react-native";
+import { useNostrStore } from "@/store/nostr";
 import { useSendMessage } from "@/hooks/nostr/useSendMessage";
 import { useEffect } from "react";
 import { router } from "expo-router";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { useMessagesStore } from "@/store/messages";
+import { KeyManager } from "@/nostr/keys";
 
 export default function NetworkTab() {
     const theme = useTheme();
     const messages = useNostrStore((state) => state.messages);
     const clearMessages = useNostrStore((state) => state.clearMessages)
-    const { sendMessage, error } = useSendMessage();
+    const contacts = useMessagesStore(s => s.contacts)
     useEffect(() => {
         clearMessages()
     }, [])
     return (
         <View style={[style.container, { backgroundColor: theme.background }]}>
-            {/* Zone de contenu (Messages/Inbox) */}
+            
             <View style={style.content}>
-                {messages.length === 0 ? (
-                    <Text style={[style.emptyText, { color: theme.interface.secondary }]}>
-                        Aucune alerte reçue pour le moment.
-                    </Text>
-                ) : (
-                    messages.map((msg, i) => (
-                        <Text key={i} style={{ color: theme.text }}>{msg.content}</Text>
-                    ))
+                
+                { contacts.length > 0 && (
+                <FlatList
+                    data={contacts}
+                    keyExtractor={item => item.pk}
+                    renderItem={({ item }) => (
+                        <Pressable
+                            onPress={() => router.push(`/chat/${KeyManager.encodeToNip19(item.pk)}`)} 
+                        >
+                            <Text style={[{ color: theme.text }]}> {item.name} </Text>
+                        </Pressable>
+                    )}
+                /> 
                 )}
-                {error && <Text style={{ color: theme.interface.danger }}>{String(error)}</Text>}
-            </View>
+                
+                { (contacts.length == 0) && (
+                    <Text style={[style.emptyText, { color: theme.interface.secondary }]}> You have no contacts yet </Text>
+                )}
 
-            {/* Le Bouton d'Action (Floating Action Button) */}
+            </View>
             <View style={style.buttonWrapper}>
                 <Pressable
                     onPress={() => router.push('/exchange')}
