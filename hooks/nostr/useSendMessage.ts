@@ -7,7 +7,7 @@ export function useSendMessage(){
     const [error, setError] = useState<Error | null>(null)
 
     const sendMessage = useCallback(
-        async (to: string, message: string) => {
+        async (to: string, message: string, createdAt?: number) => {
             try {
                 setLoading(true)
                 setError(null)
@@ -16,7 +16,7 @@ export function useSendMessage(){
                     action: "message",
                     info: {message: message, live: true}
                 }
-                return await nostrManager.send(payload, toPkHex)
+                return await nostrManager.send(payload, toPkHex, undefined, createdAt)
             } catch(error){
                 setError(error as Error)
                 throw error

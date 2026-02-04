@@ -22,7 +22,8 @@ export const contactManager = {
         const newContact: Contact = {
             pk,
             name,
-            status: "PROPOSED"
+            status: "PROPOSED",
+            messages: []
         }
         useMessagesStore.getState().addContact(newContact)
     },

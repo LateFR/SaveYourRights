@@ -2,13 +2,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type Contact = { pk: string, name: string, status: "PROPOSED" | "RECEIVED" | "ETABLISHED" }
+export type Contact = { pk: string, name: string, status: "PROPOSED" | "RECEIVED" | "ESTABLISHED", messages: Message[] }
+export type Message = {from_pk: string, message: string, timestamp: number, id: string}
+
 type messagesState = {
-    contacts: Contact[] | [],
+    contacts: Contact[],
     addContact: ( contact:  Contact) => void
     removeContact: ( pk: string ) => void
     getPkWithName: ( name: string) => string
-    getNameWithPk: ( pk: string ) => string  
+    getNameWithPk: ( pk: string ) => string,
+    addMessage: (with_pk: string, message: Message) => void
+    removeMessage: (with_pk: string, id: string) => void
+    replaceMessageId: (with_pk: string, oldId: string, newId: string) => void
 }
 
 export const useMessagesStore = create(
@@ -40,6 +45,38 @@ export const useMessagesStore = create(
                 throw new Error(`Contact not found for pk: ${pk}`)
             }
             return contact.name
+        },
+        addMessage: (with_pk, message) => {
+            set((state) => ({
+                contacts: state.contacts.map((c) => 
+                    c.pk == with_pk 
+                        ? {...c, messages: [...c.messages, message ]}
+                        : c
+                    
+                )
+            }))
+        },
+        removeMessage: (with_pk, id) => {
+            set((state) => ({
+                contacts: state.contacts.map((c) => 
+                    c.pk == with_pk
+                        ? {...c, messages: c.messages.filter((m) => m.id != id)}
+                        : c
+            )
+            }))
+        },
+        replaceMessageId: (with_pk, oldId, newId) => {
+            set((state) => ({
+                contacts: state.contacts.map((c) => 
+                    c.pk == with_pk
+                        ? {...c, messages: c.messages.map((m) => 
+                            m.id == oldId
+                                ? {...m, id: newId}
+                                : m
+                        )}
+                        : c
+            )
+            }))
         }
     }), {
         name: "messages-storage",

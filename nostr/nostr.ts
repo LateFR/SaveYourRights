@@ -2,17 +2,18 @@ import { useNostrStore } from "@/store/nostr";
 import { KeyManager } from "./keys";
 import { SimplePool, SubCloser } from 'nostr-tools/pool'
 import { DEFAULT_RELAYS } from "@/store/nostr";
+import { useMessagesStore } from "@/store/messages";
 
 const APP_KIND = 30473
 
 export type Payload = {
-    action: string,
+    action: "message" | "connect_request",
     info: Record<string, unknown>
 }
 export const nostrManager = {
     pool: new SimplePool(),
     activeSub: null as SubCloser | null,
-    async send(payload: Payload, toPk: string , relays: string[] = DEFAULT_RELAYS){
+    async send(payload: Payload, toPk: string , relays: string[] = DEFAULT_RELAYS, createdAt?: number){
         if (!KeyManager.hasKey()) throw new Error("Keys aren't generated")
         
         const stringPayload = JSON.stringify(payload) 
@@ -21,7 +22,8 @@ export const nostrManager = {
         const event = {
             content: ciphertext, 
             kind: APP_KIND,
-            tags: [["p", toPk]]
+            tags: [["p", toPk]],
+            created_at: createdAt ?? Math.floor(Date.now() / 1000)
         }
 
         const signedEvent = await KeyManager.signEvent(event) 
@@ -38,14 +40,17 @@ export const nostrManager = {
                 since: Math.floor(lastSubCheck/1000),
             }, {
                 async onevent(event) {
-                    const decrypted = await KeyManager.decryptFromNip44(event.pubkey, event.content)
+                    const decrypted: Payload = JSON.parse(await KeyManager.decryptFromNip44(event.pubkey, event.content))
                     console.log("Event receveid: ", decrypted)
-                    useNostrStore.getState().addMessage({
-                        pk: event.pubkey,
-                        content: decrypted,
-                        created_at: event.created_at,
-                        id: event.id
-                    })
+                    if (decrypted.action == "message"){
+                        
+                        useMessagesStore.getState().addMessage(event.pubkey, {
+                            from_pk: event.pubkey,
+                            message: decrypted.info.message as string,
+                            timestamp: event.created_at,
+                            id: event.id
+                        })
+                    } 
                 },
             }
         )
