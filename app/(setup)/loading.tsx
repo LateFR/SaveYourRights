@@ -10,7 +10,7 @@ export default function LoadingView(){
     
     useEffect(() => {
         async function prepareApp(){
-            await KeyManager.generateAndSaveKeys()
+            await KeyManager.ensureIdentity()
 
             setFirstLaunch(false)
             setLastSubCheck(Date.now())

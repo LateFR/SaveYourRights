@@ -1,4 +1,4 @@
-import { StyleSheet, Button } from 'react-native';
+import { StyleSheet, Button, AppState } from 'react-native';
 
 import { Text, View } from 'react-native'
 import { useAppStore } from '@/store/app';
@@ -16,7 +16,10 @@ export default function TabOneScreen() {
       </Text>
       <Button 
         title='Reset' 
-        onPress={() => AsyncStorage.clear()}
+        onPress={() => {
+          AsyncStorage.clear()
+          useAppStore.getState().setFirstLaunch(true)
+        }}
       />
     </View>
   );

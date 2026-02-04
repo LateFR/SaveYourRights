@@ -65,6 +65,7 @@ export function NostrProvider({ children }: { children: ReactNode}){
                 if (router.canDismiss()) router.dismissAll()
                 else router.replace("/(tabs)")
             }
+            console.log(error, details)
             setNostrError({error, details: details?.message ?? null})
         }
     })

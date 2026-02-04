@@ -39,7 +39,6 @@ export const KeyManager = {
     async generateAndSaveKeys(){
         let sk = generateSecretKey()
         await SecureStore.setItemAsync(SK_KEY, bytesToHex(sk))
-        console.log("Pk: ", this.encodeToNip19(this.getPublicKey()))
     },
     
     async signEvent(event: {kind: number, tags: string[][], content: string}){

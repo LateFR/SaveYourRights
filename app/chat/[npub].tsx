@@ -1,5 +1,6 @@
 import ChatInput from "@/components/chat/ChatInput"
 import { MessagesSections } from "@/components/chat/MessagesSection"
+import { useSendMessage } from "@/hooks/nostr/useSendMessage"
 import { useTheme } from "@/hooks/useTheme"
 import { KeyManager } from "@/nostr/keys"
 import { useMessagesStore } from "@/store/messages"
@@ -13,6 +14,8 @@ export default function Chat(){
     const pubkey = KeyManager.decodeFromNip19(npub)
     const name = useMessagesStore.getState().getNameWithPk(pubkey)
     const [ inputValue, setInputValue ] = useState("")
+    const { sendMessage } = useSendMessage()
+    
     return (
         
             <KeyboardAvoidingView
@@ -24,7 +27,10 @@ export default function Chat(){
                 <ChatInput 
                     inputValue={inputValue}
                     setInputValue={setInputValue}
-                    handleSendMessage={( message ) => console.log(message)}
+                    handleSendMessage={( message ) => {
+                        sendMessage(pubkey, message)
+                        setInputValue("")
+                    }}
                 />
             </KeyboardAvoidingView>
             

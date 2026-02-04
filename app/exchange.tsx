@@ -21,6 +21,7 @@ export default function ModalScreen() {
       setLink(await linkManager.makeLink())
     } catch (e) {
       setError("Failed to generate link")
+      throw e
     }
   }
   useEffect(() => {
