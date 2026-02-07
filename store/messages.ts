@@ -47,14 +47,15 @@ export const useMessagesStore = create(
             return contact.name
         },
         addMessage: (with_pk, message) => {
-            set((state) => ({
-                contacts: state.contacts.map((c) => 
+            if (get().contacts.find((c) => c.pk === with_pk)?.messages.find((m) => m.id == message.id)) return
+            set((state) => {
+                return { contacts: state.contacts.map((c) => 
                     c.pk == with_pk 
                         ? {...c, messages: [...c.messages, message ]}
                         : c
                     
-                )
-            }))
+                ) }
+            })
         },
         removeMessage: (with_pk, id) => {
             set((state) => ({

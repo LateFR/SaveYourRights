@@ -18,9 +18,7 @@ export default function ChatInput({ inputValue, setInputValue, handleSendMessage
         else setSendAvailable(false)
     }, [inputValue])
     return (
-        <View style={[style.container, {
-            bottom: Platform.OS === "ios" ? 40 : 20
-        }]}>
+        <View style={[style.container]}>
             <View style={[style.inputWrapper,{
                 borderColor: theme.interface.secondary
             }]}>
@@ -42,7 +40,7 @@ export default function ChatInput({ inputValue, setInputValue, handleSendMessage
 
 const style = StyleSheet.create({
     container: {
-        padding: 10,
+        margin: 2
     },
     inputWrapper: {
         flexDirection: "row",

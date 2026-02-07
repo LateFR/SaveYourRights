@@ -56,13 +56,12 @@ function RootLayoutNav() {
   }
   
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor:theme.background}}>
+    <View style={{ flex: 1, backgroundColor:theme.background}}>
     <NostrProvider>
       <Stack 
         initialRouteName={firstLaunch? "(setup)" : "(tabs)"}
         screenOptions={{ 
-          headerShown: false,
-          contentStyle: { backgroundColor: theme.background }
+          headerShown: false
         }}
       >
         <Stack.Screen name="(setup)" options={{ gestureEnabled: false }} />
@@ -71,7 +70,7 @@ function RootLayoutNav() {
       </Stack>
       {firstLaunch ? <Redirect href="/(setup)/loading" /> : null}
     </NostrProvider>
-    </SafeAreaView>
+    </View>
     
   );
 }

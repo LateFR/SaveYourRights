@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useMessagesStore } from "@/store/messages";
 import { KeyManager } from "@/nostr/keys";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function NetworkTab() {
     const theme = useTheme();
@@ -17,7 +18,7 @@ export default function NetworkTab() {
         clearMessages()
     }, [])
     return (
-        <View style={[style.container, { backgroundColor: theme.background }]}>
+        <SafeAreaView style={[style.container, { backgroundColor: theme.background }]}>
             
             <View style={style.content}>
                 
@@ -57,7 +58,7 @@ export default function NetworkTab() {
                 </Pressable>
                 <Text style={[style.buttonLabel, { color: theme.text }]}>Ajouter un contact</Text>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 

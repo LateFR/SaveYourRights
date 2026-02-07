@@ -9,6 +9,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { deepLinkService } from '@/services/DeepLink';
 import { ErrorPopup } from '@/components/ErrorPopup';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ModalScreen() {
   const theme = useTheme() 
@@ -44,7 +45,7 @@ export default function ModalScreen() {
     )
   }
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background}]}>
       <Pressable style={styles.closeButton} onPress={() => {
         router.dismiss()
       }}> 
@@ -61,7 +62,7 @@ export default function ModalScreen() {
           <Text style={[styles.qrCodeText, {color: "white"}]}> Scan </Text>
           <Ionicons name="qr-code" size={24} color="white" />
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
   }, 
   closeButton: {
     position: 'absolute',
-    top: 25,
+    top: 35,
     left: 25
   },
   qrCodeText: {

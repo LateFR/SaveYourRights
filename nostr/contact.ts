@@ -1,7 +1,7 @@
 import { useAppStore } from "@/store/app"
 import { nostrManager, Payload } from "./nostr"
 import { useNostrStore } from "@/store/nostr"
-import { useMessagesStore, Contact } from "@/store/messages"
+import { useMessagesStore, Contact, Message } from "@/store/messages"
 
 export const contactManager = {
     async addNewContact(pk: string , name: string = "USER", relays: string[]){
@@ -34,5 +34,5 @@ export const contactManager = {
         }
 
         await nostrManager.send(payload, pk, relays)
-    }
+    },
 }
