@@ -5,7 +5,7 @@ import { useSendMessage } from "@/hooks/nostr/useSendMessage"
 import { useTheme } from "@/hooks/useTheme"
 import { KeyManager } from "@/nostr/keys"
 import { useMessagesStore } from "@/store/messages"
-import { useLocalSearchParams } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useState } from "react"
 import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
@@ -21,7 +21,7 @@ export default function Chat(){
     const messages = useMessagesStore((s) => s.contacts.find((c) => c.pk == contactPubkey)?.messages ?? []) 
     return (
             <SafeAreaView style={[{ flex: 1, backgroundColor: theme.interface.paleBackround}]}>
-                <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} id={contactPubkey}/>
+                <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} onPressName={() => router.push(`/${npub}/profile`)} />
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "height" : "height"}
                     style={{flex:1}}

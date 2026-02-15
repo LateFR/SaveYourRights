@@ -28,7 +28,7 @@ export default function NetworkTab() {
                     keyExtractor={item => item.pk}
                     renderItem={({ item }) => (
                         <Pressable
-                            onPress={() => router.push(`/chat/${KeyManager.encodeToNip19(item.pk)}`)} 
+                            onPress={() => router.push(`/${KeyManager.encodeToNip19(item.pk)}/chat`)} 
                         >
                             <Text style={[{ color: theme.text }]}> {item.name} </Text>
                         </Pressable>

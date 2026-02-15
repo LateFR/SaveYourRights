@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from "expo-router";
 
-export function Header({name, id}: {name: string, id: string}){
+export function Header({name, onPressName}: {name: string, onPressName?: () => void}){
     const theme = useTheme()
     return (
         <View style={[ style.container, { backgroundColor: theme.interface.paleBackround}]}>
@@ -12,11 +12,12 @@ export function Header({name, id}: {name: string, id: string}){
                 <Ionicons name="arrow-back-outline" size={30} color={theme.text} />
             </Pressable>
             <View style={style.centerContent}> 
-                <Ionicons name="person-circle-outline" size={40} color={theme.text} />
-                <TouchableOpacity>
+                <Ionicons name="person-circle-outline" size={50} color={theme.text} />
+                {onPressName && <TouchableOpacity onPress={onPressName}>
 
                     <Text style={[style.textName, { color: theme.text}]} > {name} </Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
+                {!onPressName && <Text style={[style.textName, { color: theme.text}]} > {name} </Text>}
             </View>
         </View>
     )
@@ -31,7 +32,7 @@ const style = StyleSheet.create({
         zIndex: 1000
     },
     textName: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: "400",
         marginVertical: 10,
         marginLeft: 1,
