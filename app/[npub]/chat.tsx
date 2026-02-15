@@ -1,6 +1,7 @@
 import ChatInput from "@/components/chat/ChatInput"
 import { Header } from "@/components/chat/Header"
 import { MessagesSections } from "@/components/chat/MessagesSection"
+import { PendingContact } from "@/components/chat/PendingContact"
 import { useSendMessage } from "@/hooks/nostr/useSendMessage"
 import { useTheme } from "@/hooks/useTheme"
 import { KeyManager } from "@/nostr/keys"
@@ -19,17 +20,19 @@ export default function Chat(){
     const addMessage = useMessagesStore(s => s.addMessage)
     const myPk = KeyManager.getPublicKey()
     const messages = useMessagesStore((s) => {
-    const contact = s.contacts.find((c) => c.pk === contactPubkey)
-    return contact ? contact.messages : undefined
+        const contact = s.contacts.find((c) => c.pk === contactPubkey)
+        return contact ? contact.messages : undefined
     })
+
+    const contact = useMessagesStore((s) => s.contacts.find((c) => c.pk === contactPubkey))
     return (
             <SafeAreaView style={[{ flex: 1, backgroundColor: theme.interface.paleBackround}]}>
                 <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} onPressName={() => router.push(`/${npub}/profile`)} />
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "height" : "height"}
+                    behavior={"height"}
                     style={{flex:1}}
-                    keyboardVerticalOffset={0}
                 >
+                    {contact?.status == "PROPOSED" && <PendingContact />}
                     {messages && <MessagesSections messages={messages} />}
                     <ChatInput
                         inputValue={inputValue}

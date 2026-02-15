@@ -68,7 +68,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
         <Stack.Screen name="exchange" options={{ presentation: 'modal' }} />
       </Stack>
-      {firstLaunch ? <Redirect href="/(setup)/loading" /> : null}
+      {firstLaunch ? <Redirect href="/(setup)/setup" /> : null}
     </NostrProvider>
     </View>
     

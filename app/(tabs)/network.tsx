@@ -8,6 +8,7 @@ import { useMessagesStore } from "@/store/messages";
 import { KeyManager } from "@/nostr/keys";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { ChatsList } from "@/components/network/ChatsList";
 
 export default function NetworkTab() {
     const theme = useTheme();
@@ -28,17 +29,7 @@ export default function NetworkTab() {
                     {contacts.filter(c => c.status === "RECEIVED").length > 0 && <View style={[ style.notificationBadge, { backgroundColor: theme.interface.auxiliary}]} />}
                 </TouchableOpacity>
                 { getContacts().length > 0 && (
-                <FlatList
-                    data={getContacts()}
-                    keyExtractor={item => item.pk}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => router.push(`/${KeyManager.encodeToNip19(item.pk)}/chat`)} 
-                        >
-                            <Text style={[{ color: theme.text }]}> {item.name} </Text>
-                        </Pressable>
-                    )}
-                /> 
+                    <ChatsList contacts={getContacts()}/>
                 )}
                 
                 { (getContacts().length == 0) && (
@@ -74,7 +65,6 @@ const style = StyleSheet.create({
     content: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
         padding: 20,
     },
     emptyText: {

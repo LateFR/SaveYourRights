@@ -90,7 +90,6 @@ export default function Requests() {
                             </View>
                         );
                     }}
-                    contentContainerStyle={style.listContent}
                 />
             ) : (
                 <View style={style.emptyContainer}>
@@ -114,9 +113,6 @@ export default function Requests() {
 const style = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    listContent: {
-        marginVertical: 12
     },
     requestCard: {
         flexDirection: 'row',
