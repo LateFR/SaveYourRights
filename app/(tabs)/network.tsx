@@ -1,17 +1,18 @@
 import { useTheme } from "@/hooks/useTheme";
-import { StyleSheet, View, Text, Pressable, FlatList, Platform } from "react-native";
+import { StyleSheet, View, Text, Pressable, FlatList, Platform, Touchable, TouchableOpacity } from "react-native";
 import { useNostrStore } from "@/store/nostr";
-import { useSendMessage } from "@/hooks/nostr/useSendMessage";
 import { useEffect } from "react";
 import { router } from "expo-router";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useMessagesStore } from "@/store/messages";
 import { KeyManager } from "@/nostr/keys";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function NetworkTab() {
     const theme = useTheme();
     const messages = useNostrStore((state) => state.messages);
+    const getContactsByStatus = useMessagesStore((s) => s.getContactsByStatus)
     const clearMessages = useNostrStore((state) => state.clearMessages)
     const contacts = useMessagesStore(s => s.contacts)
     useEffect(() => {
@@ -21,10 +22,13 @@ export default function NetworkTab() {
         <SafeAreaView style={[style.container, { backgroundColor: theme.background }]}>
             
             <View style={style.content}>
-                
+                <TouchableOpacity style={style.newContactButton} onPress={() => router.push("/network/requests")}>
+                    <AntDesign name="user-add" size={30} color={theme.interface.primary} />
+                    {getContactsByStatus("RECEIVED").length > 0 && <View style={[ style.notificationBadge, { backgroundColor: theme.interface.auxiliary}]} />}
+                </TouchableOpacity>
                 { contacts.length > 0 && (
                 <FlatList
-                    data={contacts}
+                    data={getContactsByStatus("ESTABLISHED")}
                     keyExtractor={item => item.pk}
                     renderItem={({ item }) => (
                         <Pressable
@@ -108,4 +112,23 @@ const style = StyleSheet.create({
             },
         }),
     },
+    notificationBadge: {
+        position: 'absolute', 
+        top: -2,               
+        right: 0,  
+        width: 12,
+        height: 12,
+        borderRadius: 6,         // cercle
+        borderWidth: 0.7,
+        borderColor: 'white',    // bord blanc pour se détacher du bouton
+    },
+    newContactButton: {
+        position: "absolute",
+        right: 30,
+        top: 17,
+        width: 30,
+        height: 30,
+        justifyContent: "center",
+        alignItems: "center",
+    }
 });

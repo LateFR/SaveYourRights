@@ -2,8 +2,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { KeyManager } from "@/nostr/keys";
 import { useAppStore } from "@/store/app";
 import { Message, useMessagesStore } from "@/store/messages";
-import { useNostrStore } from "@/store/nostr";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 
 export function MessagesSections({ messages }: { messages: Message[]}){

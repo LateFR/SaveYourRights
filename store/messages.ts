@@ -2,7 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type Contact = { pk: string, name: string, status: "PROPOSED" | "RECEIVED" | "ESTABLISHED", messages: Message[] }
+export type ContactStatus = "PROPOSED" | "RECEIVED" | "ESTABLISHED"
+export type Contact = { pk: string, name: string, status: ContactStatus, messages: Message[] }
 export type Message = {from_pk: string, message: string, timestamp: number, id: string}
 
 type messagesState = {
@@ -14,6 +15,7 @@ type messagesState = {
     addMessage: (with_pk: string, message: Message) => void
     removeMessage: (with_pk: string, id: string) => void
     replaceMessageId: (with_pk: string, oldId: string, newId: string) => void
+    getContactsByStatus: (status: ContactStatus) => Contact[]
 }
 
 export const useMessagesStore = create(
@@ -78,7 +80,11 @@ export const useMessagesStore = create(
                         : c
             )
             }))
+        },
+        getContactsByStatus: (status: "PROPOSED" | "RECEIVED" | "ESTABLISHED") => {
+            return get().contacts.filter(c => c.status === status);
         }
+
     }), {
         name: "messages-storage",
         storage: createJSONStorage(() => AsyncStorage)
