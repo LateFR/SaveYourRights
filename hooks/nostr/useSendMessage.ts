@@ -1,5 +1,5 @@
 import { KeyManager } from "@/nostr/keys";
-import { nostrManager } from "@/nostr/nostr";
+import { nostrManager, VERSION } from "@/nostr/nostr";
 import { useCallback, useState } from "react";
 import { Payload } from "@/nostr/nostr";
 export function useSendMessage(){
@@ -14,7 +14,8 @@ export function useSendMessage(){
                 const toPkHex = to.startsWith('npub') ? KeyManager.decodeFromNip19(to) : to
                 const payload: Payload = {
                     action: "message",
-                    info: {message: message, live: true}
+                    info: {message: message, live: true},
+                    v: VERSION
                 }
                 return await nostrManager.send(payload, toPkHex, undefined, createdAt)
             } catch(error){

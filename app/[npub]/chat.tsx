@@ -18,7 +18,10 @@ export default function Chat(){
     const { sendMessage } = useSendMessage()
     const addMessage = useMessagesStore(s => s.addMessage)
     const myPk = KeyManager.getPublicKey()
-    const messages = useMessagesStore((s) => s.contacts.find((c) => c.pk == contactPubkey)?.messages ?? []) 
+    const messages = useMessagesStore((s) => {
+    const contact = s.contacts.find((c) => c.pk === contactPubkey)
+    return contact ? contact.messages : undefined
+    })
     return (
             <SafeAreaView style={[{ flex: 1, backgroundColor: theme.interface.paleBackround}]}>
                 <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} onPressName={() => router.push(`/${npub}/profile`)} />
@@ -27,7 +30,7 @@ export default function Chat(){
                     style={{flex:1}}
                     keyboardVerticalOffset={0}
                 >
-                    <MessagesSections messages={messages} />
+                    {messages && <MessagesSections messages={messages} />}
                     <ChatInput
                         inputValue={inputValue}
                         setInputValue={setInputValue}

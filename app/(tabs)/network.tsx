@@ -1,7 +1,7 @@
 import { useTheme } from "@/hooks/useTheme";
 import { StyleSheet, View, Text, Pressable, FlatList, Platform, Touchable, TouchableOpacity } from "react-native";
 import { useNostrStore } from "@/store/nostr";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { router } from "expo-router";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useMessagesStore } from "@/store/messages";
@@ -12,9 +12,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 export default function NetworkTab() {
     const theme = useTheme();
     const messages = useNostrStore((state) => state.messages);
+    const contacts = useMessagesStore(s => s.contacts)
     const getContactsByStatus = useMessagesStore((s) => s.getContactsByStatus)
     const clearMessages = useNostrStore((state) => state.clearMessages)
-    const contacts = useMessagesStore(s => s.contacts)
+    const getContacts = () => [...getContactsByStatus("ESTABLISHED"), ...getContactsByStatus("PROPOSED")]
     useEffect(() => {
         clearMessages()
     }, [])
@@ -24,11 +25,11 @@ export default function NetworkTab() {
             <View style={style.content}>
                 <TouchableOpacity style={style.newContactButton} onPress={() => router.push("/network/requests")}>
                     <AntDesign name="user-add" size={30} color={theme.interface.primary} />
-                    {getContactsByStatus("RECEIVED").length > 0 && <View style={[ style.notificationBadge, { backgroundColor: theme.interface.auxiliary}]} />}
+                    {contacts.filter(c => c.status === "RECEIVED").length > 0 && <View style={[ style.notificationBadge, { backgroundColor: theme.interface.auxiliary}]} />}
                 </TouchableOpacity>
-                { contacts.length > 0 && (
+                { getContacts().length > 0 && (
                 <FlatList
-                    data={getContactsByStatus("ESTABLISHED")}
+                    data={getContacts()}
                     keyExtractor={item => item.pk}
                     renderItem={({ item }) => (
                         <Pressable
@@ -40,7 +41,7 @@ export default function NetworkTab() {
                 /> 
                 )}
                 
-                { (contacts.length == 0) && (
+                { (getContacts().length == 0) && (
                     <Text style={[style.emptyText, { color: theme.interface.secondary }]}> You have no contacts yet </Text>
                 )}
 

@@ -1,5 +1,5 @@
 import { useAppStore } from "@/store/app"
-import { nostrManager, Payload } from "./nostr"
+import { nostrManager, Payload, VERSION } from "./nostr"
 import { useNostrStore } from "@/store/nostr"
 import { useMessagesStore, Contact, Message } from "@/store/messages"
 
@@ -16,7 +16,10 @@ export const contactManager = {
 
         console.log(relays, reachableRelays, results)
         if (reachableRelays.length === 0) throw new Error("The contact "+pk+" doesn't have reachable relays")
-        
+        if (useMessagesStore.getState().getContactsByStatus("RECEIVED").some(c => c.pk == pk)){
+            this.acceptContact(pk)
+            return
+        }
         await this.initHandcheck(pk, relays)
         
         const newContact: Contact = {
@@ -30,9 +33,31 @@ export const contactManager = {
     async initHandcheck(pk: string, relays: string[]){
         const payload: Payload = {
             action: "connect_request",
-            info: {name: useAppStore.getState().username, relays: useNostrStore.getState().relaysToListen.slice(0, 5)}
+            info: {name: useAppStore.getState().username, relays: useNostrStore.getState().relaysToListen.slice(0, 5)},
+            v: VERSION,
         }
 
         await nostrManager.send(payload, pk, relays)
     },
+    async acceptContact(pk: string){
+        useMessagesStore.getState().setStatus(pk, "ESTABLISHED")
+        const payload: Payload = {
+            action: "accept_request",
+            info: {},
+            v: VERSION
+        }
+
+        await nostrManager.send(payload, pk)
+    },
+    async deleteContact(pk: string){
+        if (useMessagesStore.getState().contacts.find(c => pk == c.pk)?.status == "ESTABLISHED"){
+            const payload: Payload = {
+                action: "removed_contact",
+                info: {},
+                v: VERSION
+            }
+        }
+        useMessagesStore.getState().removeContact(pk)
+
+    }
 }

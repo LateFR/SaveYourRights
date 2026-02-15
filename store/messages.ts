@@ -9,7 +9,8 @@ export type Message = {from_pk: string, message: string, timestamp: number, id: 
 type messagesState = {
     contacts: Contact[],
     addContact: ( contact:  Contact) => void
-    removeContact: ( pk: string ) => void
+    removeContact: ( pk: string ) => void,
+    setStatus: ( pk: string, newStatus: ContactStatus ) => void
     getPkWithName: ( name: string) => string
     getNameWithPk: ( pk: string ) => string,
     addMessage: (with_pk: string, message: Message) => void
@@ -32,6 +33,11 @@ export const useMessagesStore = create(
         removeContact: ( pk ) => {
             set((state) => ({
                 contacts: state.contacts.filter((c) => c.pk !== pk)
+            }))
+        },
+        setStatus:(pk, newStatus) => {
+            set((state) => ({
+                contacts: state.contacts.map((c) => c.pk == pk ? {...c, status: newStatus} : c)
             }))
         },
         getPkWithName: ( name ) => {

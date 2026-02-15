@@ -29,7 +29,7 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         padding: 2,
-        zIndex: 1000
+        zIndex: 11
     },
     textName: {
         fontSize: 20,
