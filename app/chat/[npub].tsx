@@ -1,21 +1,19 @@
 import ChatInput from "@/components/chat/ChatInput"
+import { Header } from "@/components/chat/Header"
 import { MessagesSections } from "@/components/chat/MessagesSection"
 import { useSendMessage } from "@/hooks/nostr/useSendMessage"
 import { useTheme } from "@/hooks/useTheme"
 import { KeyManager } from "@/nostr/keys"
 import { useMessagesStore } from "@/store/messages"
-import { useNostrStore } from "@/store/nostr"
 import { useLocalSearchParams } from "expo-router"
 import { useState } from "react"
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, StatusBar } from "react-native"
+import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function Chat(){
     const theme = useTheme()
-    const insets = useSafeAreaInsets()
     const { npub } = useLocalSearchParams<{npub: string}>()
     const contactPubkey = KeyManager.decodeFromNip19(npub)
-    const contactName = useMessagesStore.getState().getNameWithPk(contactPubkey)
     const [ inputValue, setInputValue ] = useState("")
     const { sendMessage } = useSendMessage()
     const addMessage = useMessagesStore(s => s.addMessage)
@@ -23,8 +21,9 @@ export default function Chat(){
     const messages = useMessagesStore((s) => s.contacts.find((c) => c.pk == contactPubkey)?.messages ?? []) 
     return (
             <SafeAreaView style={[{ flex: 1, backgroundColor: theme.interface.paleBackround}]}>
+                <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} id={contactPubkey}/>
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    behavior={Platform.OS === "ios" ? "height" : "height"}
                     style={{flex:1}}
                     keyboardVerticalOffset={0}
                 >
@@ -46,8 +45,3 @@ export default function Chat(){
     )
 }
 
-const style =StyleSheet.create({
-    container: {
-        flex: 1,
-    } ,
-})

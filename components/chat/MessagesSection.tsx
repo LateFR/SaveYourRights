@@ -3,7 +3,7 @@ import { KeyManager } from "@/nostr/keys";
 import { useAppStore } from "@/store/app";
 import { Message, useMessagesStore } from "@/store/messages";
 import { useNostrStore } from "@/store/nostr";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, Text, FlatList } from "react-native";
 
 export function MessagesSections({ messages }: { messages: Message[]}){
@@ -12,25 +12,20 @@ export function MessagesSections({ messages }: { messages: Message[]}){
     const getNameWithPk = useMessagesStore(s => s.getNameWithPk)
     const myName = useAppStore(s => s.username)
     const flatRef = useRef<FlatList>(null)
-
     useEffect(() => {
         if (messages.length > 0 && (messages && messages[messages.length - 1].from_pk == myPk)){
             flatRef.current?.scrollToEnd({ animated: true })
         }
     }, [messages.length])
-    useEffect(() => {
-    if (messages.length > 0) {
-            setTimeout(() => {
-                flatRef.current?.scrollToEnd({ animated: false })
-            }, 100)
-        }
-    }, []) 
     return (
         <View style={style.container}>
             <FlatList
                 ref={ flatRef }
                 data={ messages }
+                ListFooterComponent={<View style={{ height: 14 }} />}
+                showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
+                onLayout={() => flatRef.current?.scrollToEnd({ animated: false })} 
                 renderItem={({ item, index }) => {
                     const isMe = item.from_pk == myPk
                     const next = messages[index + 1]
@@ -63,7 +58,9 @@ export function MessagesSections({ messages }: { messages: Message[]}){
 
 const style = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        paddingBottom: 20,
+        marginHorizontal: 5
     },
     bubble: {
         padding: 10,

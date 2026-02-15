@@ -1,4 +1,4 @@
-import { View, TextInput, Pressable, StyleSheet, Platform } from "react-native";
+import { View, TextInput, Pressable, StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -18,29 +18,35 @@ export default function ChatInput({ inputValue, setInputValue, handleSendMessage
         else setSendAvailable(false)
     }, [inputValue])
     return (
-        <View style={[style.container]}>
-            <View style={[style.inputWrapper,{
-                borderColor: theme.interface.secondary
-            }]}>
-                <TextInput 
-                value={inputValue}
-                onChangeText={setInputValue}
-                style={[style.input, {
-                    color: theme.text,
-                }]}
-                multiline={true}
-                />
-                <Pressable onPress={() => {handleSendMessage(inputValue)}} disabled={!sendAvailable}>
-                    <MaterialIcons name="send" size={22} color={sendAvailable ? theme.text: theme.colors.gray[500]}/>
-                </Pressable>
+            <View style={[style.container, {backgroundColor: theme.background}]}>
+                <View style={[style.inputWrapper,{
+                    borderColor: theme.interface.secondary
+                }]}>
+                    <TextInput 
+                    value={inputValue}
+                    onChangeText={setInputValue}
+                    style={[style.input, {
+                        color: theme.text,
+                    }]}
+                    multiline={true}
+                    />
+                    <Pressable style={{marginHorizontal: 3}} onPress={() => {handleSendMessage(inputValue)}} disabled={!sendAvailable}>
+                        <MaterialIcons name="send" size={22} color={sendAvailable ? theme.text: theme.colors.gray[500]}/>
+                    </Pressable>
+                </View>
             </View>
-        </View>
     )
 }
 
 const style = StyleSheet.create({
     container: {
-        margin: 2
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        margin: 0,
+        borderRadius: 50,
+        marginHorizontal: 5
     },
     inputWrapper: {
         flexDirection: "row",
