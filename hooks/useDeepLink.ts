@@ -1,5 +1,5 @@
 import { deepLinkService, Handlers } from "@/services/DeepLink";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export function useDeepLink({onNewExchange, onError}: Handlers){
     useEffect(() => {

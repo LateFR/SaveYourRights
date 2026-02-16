@@ -2,6 +2,7 @@ import * as Linking from 'expo-linking'
 import { EmitterSubscription } from 'react-native';
 import { linkManager } from '@/nostr/link';
 import { DEFAULT_RELAYS } from '@/store/nostr';
+import { KeyManager } from '@/nostr/keys';
 export type Handlers = {
     onNewExchange: (pk: string, name: string, relays: string[]) => void,
     onError: (message: string, details?: Error) => void
@@ -25,7 +26,7 @@ class DeepLink{
         this.isInitialized = true
 
         this.subscription = Linking.addEventListener("url", async (event) => {
-            if (this.lastProcessedUrl) return
+            if (this.lastProcessedUrl == event.url) return
             await this.handleURL(event.url)
         })
     }
@@ -62,6 +63,11 @@ class DeepLink{
                 return
             }
             const [_ , pk, name, relays, expiration] = payload
+
+            if (pk == KeyManager.getPublicKey()){
+                this.handlers.onError("You tried adding yourself")
+                return
+            }
             try{
                 if (linkManager.isSigExpired(expiration)){
                     throw new Error()

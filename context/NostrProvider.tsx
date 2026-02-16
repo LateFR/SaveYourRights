@@ -52,7 +52,12 @@ export function NostrProvider({ children }: { children: ReactNode}){
     }, [isNostrStoreReady])
     useDeepLink({
         onNewExchange: (pk: string, name: string, relays: string[]) => {
-            if (router.canDismiss()) router.dismiss()
+            try{
+                router.back()
+            } catch (e) {
+                console.warn(e)
+             }
+
             setName(name)
             waitForPopupContinue().then(async (name) => {
                 if (isProcessing) return
@@ -64,6 +69,7 @@ export function NostrProvider({ children }: { children: ReactNode}){
                     setNostrError({ error: "The contact can't be reached. Please check you're internet connection", details: (err as Error)?.message })
                 } finally {
                     setIsProcessing(false)
+                    setShowNewContactPopup(false)
                 }
             }).catch(() => {return})
         }, 
@@ -73,6 +79,7 @@ export function NostrProvider({ children }: { children: ReactNode}){
                 else router.replace("/(tabs)")
             }
             console.log(error, details)
+            setShowNewContactPopup(false)
             setNostrError({error, details: details?.message ?? null})
         }
     })
