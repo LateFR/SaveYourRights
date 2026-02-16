@@ -11,29 +11,35 @@ export function MessagesSections({ messages }: { messages: Message[]}){
     const getNameWithPk = useMessagesStore(s => s.getNameWithPk)
     const myName = useAppStore(s => s.username)
     const flatRef = useRef<FlatList>(null)
-    const startOpen = useRef(Date.now() / 1000)
+    const reversedMessages = [...messages].reverse()
+
     useEffect(() => {
         if (messages.length > 0 && (messages && messages[messages.length - 1].from_pk == myPk)){
-            flatRef.current?.scrollToEnd({ animated: true })
+            flatRef.current?.scrollToOffset({offset: 0, animated: true })
         }
     }, [messages.length])
+    //console.log(messages.length)
     return (
         <View style={style.container}>
             <FlatList
                 ref={ flatRef }
-                data={ messages }
+                data={reversedMessages}  
+                inverted
                 ListFooterComponent={<View style={{ height: 14 }} />}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
-                onContentSizeChange={() => {
-                    if ((Date.now()/1000 - startOpen.current) < 2) flatRef.current?.scrollToEnd({ animated: false })
-                }}
                 renderItem={({ item, index }) => {
                     const isMe = item.from_pk == myPk
-                    const next = messages[index + 1]
+                    const next = reversedMessages[index - 1]
                     const isSameNext = next ? item.from_pk == next.from_pk : false
                     return (
                     <>
+                    {!isSameNext && (
+                        <Text style={[ style.userText, {
+                            color: theme.interface.secondary,
+                            alignSelf: isMe? "flex-end" : "flex-start",
+                        }]}> {isMe ? myName : getNameWithPk(item.from_pk)} </Text>
+                    )} 
                     <View style={[ style.bubble, isMe? style.bubbleRight : style.bubbleLeft, { 
                         backgroundColor: isMe ? theme.interface.primary : theme.interface.secondary, 
                         borderBottomRightRadius: (!isSameNext && isMe) ? 0: 30,
@@ -44,12 +50,6 @@ export function MessagesSections({ messages }: { messages: Message[]}){
                     }]}>
                         <Text style={[ { color: theme.colors.neutrals.white } ]}> {item.message} </Text>
                     </View>
-                    {!isSameNext && (
-                        <Text style={[ style.userText, {
-                            color: theme.interface.secondary,
-                            alignSelf: isMe? "flex-end" : "flex-start",
-                        }]}> {isMe ? myName : getNameWithPk(item.from_pk)} </Text>
-                    )} 
                     </>   
                     )
                 }}
@@ -61,7 +61,7 @@ export function MessagesSections({ messages }: { messages: Message[]}){
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        paddingBottom: 20,
+        paddingBottom: 50,
         marginHorizontal: 5
     },
     bubble: {

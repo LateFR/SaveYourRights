@@ -47,9 +47,9 @@ export default function Chat(){
                         handleSendMessage={( message ) => {
                             const tempId = `temp-${Date.now()}-${Math.random()}`
                             const timestamp = Math.floor(Date.now() / 1000)
-                            sendMessage(contactPubkey, message, timestamp)
                             setInputValue("")
                             addMessage(contactPubkey, { from_pk: myPk, message: message, read: true, timestamp: timestamp, id: tempId})
+                            sendMessage(contactPubkey, message, timestamp)
                         }}
                     />
                 </KeyboardAvoidingView>
