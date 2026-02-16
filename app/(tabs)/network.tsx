@@ -1,5 +1,5 @@
 import { useTheme } from "@/hooks/useTheme";
-import { StyleSheet, View, Text, Pressable, FlatList, Platform, Touchable, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Pressable, Platform, TouchableOpacity } from "react-native";
 import { useNostrStore } from "@/store/nostr";
 import { useEffect, useRef } from "react";
 import { router } from "expo-router";

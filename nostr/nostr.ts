@@ -124,6 +124,7 @@ export const nostrManager = {
             useMessagesStore.getState().addMessage(event.pubkey, {
                 from_pk: event.pubkey,
                 message: decrypted.info.message as string,
+                read: false,
                 timestamp: event.created_at,
                 id: event.id
             })

@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 export type ContactStatus = "PROPOSED" | "RECEIVED" | "ESTABLISHED"
 export type Contact = { pk: string, name: string, status: ContactStatus, messages: Message[] }
-export type Message = {from_pk: string, message: string, timestamp: number, id: string}
+export type Message = {from_pk: string, message: string, read: boolean, timestamp: number, id: string}
 
 type messagesState = {
     contacts: Contact[],
@@ -17,6 +17,7 @@ type messagesState = {
     removeMessage: (with_pk: string, id: string) => void
     replaceMessageId: (with_pk: string, oldId: string, newId: string) => void
     getContactsByStatus: (status: ContactStatus) => Contact[]
+    setRead: (pk: string, id: string, newRead: boolean) => void 
 }
 
 export const useMessagesStore = create(
@@ -89,7 +90,19 @@ export const useMessagesStore = create(
         },
         getContactsByStatus: (status: "PROPOSED" | "RECEIVED" | "ESTABLISHED") => {
             return get().contacts.filter(c => c.status === status);
+        },
+        setRead: (pk, id, newRead) => {
+            set((state) => ({
+                contacts: state.contacts.map((c) => c.pk == pk
+                    ? {...c, messages: c.messages.map(m => m.id == id 
+                        ? {...m, read: newRead}
+                        : m)
+                    }
+                    : c)
+                }
+            ))
         }
+        
 
     }), {
         name: "messages-storage",

@@ -7,7 +7,7 @@ import { useTheme } from "@/hooks/useTheme"
 import { KeyManager } from "@/nostr/keys"
 import { useMessagesStore } from "@/store/messages"
 import { router, useLocalSearchParams } from "expo-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { StyleSheet, KeyboardAvoidingView, Platform } from "react-native"
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -23,7 +23,14 @@ export default function Chat(){
         const contact = s.contacts.find((c) => c.pk === contactPubkey)
         return contact ? contact.messages : undefined
     })
+    
+    const setRead = useMessagesStore(s => s.setRead)
 
+    useEffect(() => {
+        messages?.forEach(m => {
+            setRead(contactPubkey, m.id, true) //set has read all new message
+        });
+    }, [messages?.length])
     const contact = useMessagesStore((s) => s.contacts.find((c) => c.pk === contactPubkey))
     return (
             <SafeAreaView style={[{ flex: 1, backgroundColor: theme.interface.paleBackround}]}>
@@ -42,7 +49,7 @@ export default function Chat(){
                             const timestamp = Math.floor(Date.now() / 1000)
                             sendMessage(contactPubkey, message, timestamp)
                             setInputValue("")
-                            addMessage(contactPubkey, { from_pk: myPk, message: message, timestamp: timestamp, id: tempId})
+                            addMessage(contactPubkey, { from_pk: myPk, message: message, read: true, timestamp: timestamp, id: tempId})
                         }}
                     />
                 </KeyboardAvoidingView>

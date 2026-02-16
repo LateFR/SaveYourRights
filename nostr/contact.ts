@@ -1,7 +1,7 @@
 import { useAppStore } from "@/store/app"
 import { nostrManager, Payload, VERSION } from "./nostr"
 import { useNostrStore } from "@/store/nostr"
-import { useMessagesStore, Contact, Message } from "@/store/messages"
+import { useMessagesStore, Contact } from "@/store/messages"
 
 export const contactManager = {
     async addNewContact(pk: string , name: string = "USER", relays: string[]){
