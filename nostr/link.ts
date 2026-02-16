@@ -2,10 +2,12 @@ import { KeyManager } from "./keys"
 import { DEFAULT_RELAYS } from "@/store/nostr"
 import { Buffer } from "buffer"
 import { encode, decode } from "@msgpack/msgpack"
+import { useAppStore } from "@/store/app"
 
 type WirePayload = [
     1, //Version
     string, // privateKey
+    string, // name
     string[], //relays
     number, //expiration
 ]
@@ -16,6 +18,7 @@ export const linkManager = {
         const payload: WirePayload = [
             1,
             KeyManager.getPublicKey(),
+            useAppStore.getState().username,
             DEFAULT_RELAYS,
             Math.floor(Date.now() / 1000) + 60 * 10
         ]
@@ -67,11 +70,12 @@ export const linkManager = {
     },
     isWirePayload(payload: any): payload is WirePayload {
         return Array.isArray(payload) &&
-            payload.length === 4 &&
+            payload.length === 5 &&
             typeof payload[0] === "number" &&
             typeof payload[1] === "string" &&
-            Array.isArray(payload[2]) &&
-            typeof payload[3] === "number"
+            typeof payload[2] === "string" &&
+            Array.isArray(payload[3]) &&
+            typeof payload[4] === "number"
     },
     isValidWssUrl(url: string): boolean {
         try {

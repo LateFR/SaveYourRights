@@ -43,14 +43,14 @@ export const useMessagesStore = create(
         getPkWithName: ( name ) => {
             const contact = get().contacts.find((c) => c.name === name)
             if (!contact) {
-                throw new Error(`Contact not found for name: ${name}`)
+                return "Unknow"
             }
             return contact.pk
         },
         getNameWithPk: ( pk ) => {
             const contact = get().contacts.find((c) => c.pk === pk)
             if (!contact) {
-                throw new Error(`Contact not found for pk: ${pk}`)
+                return "Unknow"
             }
             return contact.name
         },

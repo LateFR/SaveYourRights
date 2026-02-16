@@ -30,7 +30,7 @@ export default function ChatInput({ inputValue, setInputValue, handleSendMessage
                     }]}
                     multiline={true}
                     />
-                    <Pressable style={{marginHorizontal: 3}} onPress={() => {handleSendMessage(inputValue)}} disabled={!sendAvailable}>
+                    <Pressable style={{margin: 8}} onPress={() => {handleSendMessage(inputValue)}} disabled={!sendAvailable}>
                         <MaterialIcons name="send" size={22} color={sendAvailable ? theme.text: theme.colors.gray[500]}/>
                     </Pressable>
                 </View>

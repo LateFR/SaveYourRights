@@ -18,6 +18,9 @@ export function NostrProvider({ children }: { children: ReactNode}){
     const [onPopupContinue, setOnPopupContinue] = useState<((name: string) => void) | null>(null)
     const [onCanceledPopup, setOnCanceledPopup] = useState<(() => void) | null>(null)
     const relaysToListen = useNostrStore((state) => state.relaysToListen)
+    const [name, setName] = useState("")
+    const [isProcessing, setIsProcessing] = useState(false)
+
     const waitForPopupContinue = async (): Promise<string> => {
         return new Promise((resolve, reject) => {
             setOnCanceledPopup(() => () => {
@@ -48,15 +51,19 @@ export function NostrProvider({ children }: { children: ReactNode}){
         return () => nostrManager.stopListening()
     }, [isNostrStoreReady])
     useDeepLink({
-        onNewExchange: (pk: string, relays: string[]) => {
+        onNewExchange: (pk: string, name: string, relays: string[]) => {
             if (router.canDismiss()) router.dismiss()
-                
+            setName(name)
             waitForPopupContinue().then(async (name) => {
+                if (isProcessing) return
+                setIsProcessing(true)
                 try{
                     await contactManager.addNewContact(pk, name, relays)
                     setShowNewContactPopup(false)
                 } catch (err) {
                     setNostrError({ error: "The contact can't be reached. Please check you're internet connection", details: (err as Error)?.message })
+                } finally {
+                    setIsProcessing(false)
                 }
             }).catch(() => {return})
         }, 
@@ -79,6 +86,8 @@ export function NostrProvider({ children }: { children: ReactNode}){
             
             <NewContactPopup 
                 visible={showNewContactPopup} 
+                name={name}
+                setName={setName}
                 onClose={() => setShowNewContactPopup(false)} 
                 onCanceled={() => onCanceledPopup?.()} 
                 onContinue={(name) => onPopupContinue?.(name)}

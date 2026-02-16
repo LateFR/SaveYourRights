@@ -56,6 +56,7 @@ export const contactManager = {
                 info: {},
                 v: VERSION
             }
+            await nostrManager.send(payload, pk)
         }
         useMessagesStore.getState().removeContact(pk)
 

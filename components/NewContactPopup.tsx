@@ -6,9 +6,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useEffect, useState } from "react";
 import Animated, { SlideInDown, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
-export function NewContactPopup({visible, onClose, onCanceled, onContinue}: {visible: boolean, onClose?: () => void, onCanceled?: () => void, onContinue?: (name: string) => void}){
+export function NewContactPopup({visible, name, setName, onClose, onCanceled, onContinue}: {visible: boolean, name: string, setName: (name: string) => void,  onClose?: () => void, onCanceled?: () => void, onContinue?: (name: string) => void}){
     const theme = useTheme()
-    const [name, setName] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const scale = useSharedValue(1)
     const isValidInput = name.trim().length > 0
@@ -29,7 +28,6 @@ export function NewContactPopup({visible, onClose, onCanceled, onContinue}: {vis
     }
 
     useEffect(() => {
-        setName("")
         setLoading(false)
     }, [visible])
     

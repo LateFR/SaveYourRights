@@ -3,7 +3,7 @@ import { EmitterSubscription } from 'react-native';
 import { linkManager } from '@/nostr/link';
 import { DEFAULT_RELAYS } from '@/store/nostr';
 export type Handlers = {
-    onNewExchange: (pk: string, relays: string[]) => void,
+    onNewExchange: (pk: string, name: string, relays: string[]) => void,
     onError: (message: string, details?: Error) => void
 }
 class DeepLink{
@@ -55,12 +55,12 @@ class DeepLink{
                 ({payload, sig, originalPayload: ogPayload} = linkManager.decodePayload(encodedPayload))
             } catch(err) {
                 this.handlers.onError(
-                    "Error, the contact is malformed. Please retry.",
+                    "Error, the QRCode/link is malformed. Please retry.",
                     err as Error
                 )
                 return
             }
-            const [_ , pk, relays, expiration] = payload
+            const [_ , pk, name, relays, expiration] = payload
             try{
                 if (linkManager.isSigExpired(expiration)){
                     throw new Error()
@@ -81,7 +81,7 @@ class DeepLink{
             const filteredRelays = relays.filter((relay) => linkManager.isValidWssUrl(relay))
             const finalRelays = filteredRelays.length ? filteredRelays : DEFAULT_RELAYS
             
-            this.handlers.onNewExchange(pk, finalRelays)
+            this.handlers.onNewExchange(pk, name, finalRelays)
         } finally {
             this.isHandling = false     
         }   

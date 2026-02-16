@@ -14,6 +14,7 @@ export default function Profile(){
     const { npub } = useLocalSearchParams<{ npub: string }>()
     const contactPubkey = KeyManager.decodeFromNip19(npub)
     const [error, setError] = useState<Error | null>(null)
+    const name = useMessagesStore.getState().getNameWithPk(contactPubkey)
     const handleDelete = async () => {
         try {
             await contactManager.deleteContact(contactPubkey)
@@ -25,7 +26,7 @@ export default function Profile(){
     }
     return (
         <SafeAreaView style={[{ flex: 1, alignItems: "center", backgroundColor: theme.interface.paleBackround}]}>
-            <Header name={useMessagesStore.getState().getNameWithPk(contactPubkey)} />
+            <Header name={name} />
             <TouchableOpacity style={[style.removeContact, {backgroundColor: theme.interface.danger}]}onPress={() => handleDelete()}>
                 <Text> Remove contact </Text>
             </TouchableOpacity>
