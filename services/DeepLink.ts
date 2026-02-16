@@ -14,7 +14,8 @@ class DeepLink{
         this.handlers = handlers
         this.isInitialized = false
     }
-    isHandling: boolean = false
+    private lastProcessedUrl: string | null = null
+
     async initialize(){
         if (this.isInitialized) return
         
@@ -24,15 +25,15 @@ class DeepLink{
         this.isInitialized = true
 
         this.subscription = Linking.addEventListener("url", async (event) => {
-            if (this.isHandling) return
+            if (this.lastProcessedUrl) return
             await this.handleURL(event.url)
         })
     }
 
     async handleURL(url: string){
-        if (this.isHandling) return
+        if (this.lastProcessedUrl == url) return
 
-        this.isHandling = true
+        this.lastProcessedUrl = url
 
         try{
             const parsed = Linking.parse(url)
@@ -83,7 +84,7 @@ class DeepLink{
             
             this.handlers.onNewExchange(pk, name, finalRelays)
         } finally {
-            this.isHandling = false     
+            this.lastProcessedUrl = null
         }   
     }
 
