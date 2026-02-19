@@ -4,6 +4,8 @@ import { Tabs } from 'expo-router'
 import { useTheme } from '@/hooks/useTheme'
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Feather from '@expo/vector-icons/Feather';
+import { FontAwesome6, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name']
@@ -34,7 +36,9 @@ export default function TabLayout() {
         options={{
           title: "",
           tabBarLabel: () => null,
-          tabBarIcon: ({ color }) => <FontAwesome5 name="users" size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => focused 
+          ? (<MaterialCommunityIcons name="message" size={28} color={color} />)
+          : (<Feather name="message-square" size={28} color={color} />)
         }}
       />
 
@@ -42,8 +46,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '',
-          tabBarIcon: ({ color }) => (
-            <Entypo name="home" color={color} size={28} />
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons name={focused ? "home" : "home-outline"} color={color} size={34} />
           ),
         }}
       />
@@ -53,9 +57,20 @@ export default function TabLayout() {
         name="two"
         options={{
           title: '',
+          tabBarIcon: ({ color, focused }) => focused 
+            ? <Ionicons name="shield" size={28} color={color} />
+            : <Ionicons name="shield-outline" size={28} color={color} />
+          ,
+        }}
+      />
+
+      <Tabs.Screen
+        name='parameters'
+        options={{
+          title: "",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="shield" color={color} />
-          ),
+            <Feather name="menu" size={28} color={color} />
+          )
         }}
       />
     </Tabs>

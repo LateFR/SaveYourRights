@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 import { router } from "expo-router";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useMessagesStore } from "@/store/messages";
-import { KeyManager } from "@/nostr/keys";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { ChatsList } from "@/components/network/ChatsList";
